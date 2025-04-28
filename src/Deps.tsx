@@ -94,8 +94,8 @@ function Deps() {
             <ScrollArea type="always" className="max-h-72 w-full rounded-md border">
               {filteredDeputies && filteredDeputies.map((deputy: DeputyProps) => {
                 return (
-                  <div className="hover:cursor-pointer hover:bg-accent pt-2">
-                    <Button variant="link" onClick={() => handleClick(deputy)} key={deputy.id} className="text-sm text-center pb-2">
+                  <div key={deputy.id} className="hover:cursor-pointer hover:bg-accent pt-2">
+                    <Button variant="link" onClick={() => handleClick(deputy)} className="text-sm text-center pb-2">
                       {deputy.nome}
                     </Button>
                     <Separator />
