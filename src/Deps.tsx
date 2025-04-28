@@ -36,7 +36,8 @@ function Deps() {
     const fetchDeputies = async () => {
       try {
         // console.log("fetchDeputies");
-        const response = await fetch(`http://localhost:8010/proxy/deputados?ordem=ASC&ordenarPor=nome`);
+        // const response = await fetch(`http://localhost:8010/proxy/deputados?ordem=ASC&ordenarPor=nome`);
+        const response = await fetch(`https://dadosabertos.camara.leg.br/api/v2/deputados?ordem=ASC&ordenarPor=nome`);
         const json = await response.json();
         setDeputies(json.dados);
       } catch (e) {
