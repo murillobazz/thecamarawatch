@@ -3,7 +3,7 @@
 import * as React from "react"
 import { format } from "date-fns"
 import { CalendarIcon } from "lucide-react"
-import { DateRange } from "react-day-picker"
+import { DateRange, SelectRangeEventHandler } from "react-day-picker"
 
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
@@ -14,15 +14,19 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover"
 
+interface DatePickerProps extends React.HTMLAttributes<HTMLDivElement> {
+  sendDateToParent: (range: DateRange | undefined) => void;
+}
+
 export function DatePicker({
   className, sendDateToParent
-}: React.HTMLAttributes<HTMLDivElement> | any) {
+}: DatePickerProps) {
 
   const [date, setDate] = React.useState<DateRange | undefined>({ from: new Date(2024, 0, 1), to: new Date(2025, 0, 1) })
 
-  const handleDate : SelectRangeEventHandler | undefined = (newDate: DateRange | undefined) => {
-    setDate(newDate);
-    sendDateToParent(date);
+  const handleDate: SelectRangeEventHandler = (range) => {
+    setDate(range);
+    sendDateToParent(range);
   }
 
   return (
@@ -58,7 +62,7 @@ export function DatePicker({
             mode="range"
             defaultMonth={date?.from}
             selected={date}
-            onSelect={() => handleDate(date)}
+            onSelect={(range, selectedDay, activeModifiers, e) => handleDate(range, selectedDay, activeModifiers, e)}
             numberOfMonths={2}
           />
         </PopoverContent>
