@@ -2,23 +2,25 @@ import {
   Card,
   CardContent,
   CardDescription,
-  CardFooter,
+  // CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
 import { useEffect, useState } from "react";
+import DeputyProps from "@/types/deputyProps";
 
-export default function TotalExpensesCard({ selectedDeputy }) {
+export default function TotalExpensesCard({ selectedDeputy }: { selectedDeputy: DeputyProps | null }) {
   // TODO -> Criar um componente "CardContainer" que faça o fetch dos "expenses", para que este state seja utilizado em mais de um card
   // Não está sendo utilizado aqui no momento, porém pode ser utilizado em um card com os tipos de gastos por exemplo.
-  const [expenses, setExpenses] = useState([]);
-  const [total, setTotal] = useState(null);
+  // const [expenses, setExpenses] = useState([]);
+  const [total, setTotal] = useState<number | null>(null);
 
   useEffect(() => {     
     // TODO -> Adicionar um loading para atualização dos valores (está com delay entre o profileCard e o totalExpensesCard)
     const fetchExpenses = async () => {
       try {
-        let response = await fetch(`http://localhost:8010/proxy/deputados/${selectedDeputy.id}/despesas?idLegislatura=${selectedDeputy.ultimoStatus.idLegislatura}&pagina=1&&ano=2025&itens=100&ordem=DESC&ordenarPor=idLegislatura`);
+        // let response = await fetch(`http://localhost:8010/proxy/deputados/${selectedDeputy?.id}/despesas?idLegislatura=${selectedDeputy?.ultimoStatus.idLegislatura}&pagina=1&&ano=2025&itens=100&ordem=DESC&ordenarPor=idLegislatura`);
+        let response = await fetch(`https://dadosabertos.camara.leg.br/api/v2/deputados/${selectedDeputy?.id}/despesas?idLegislatura=${selectedDeputy?.ultimoStatus.idLegislatura}&pagina=1&&ano=2025&itens=100&ordem=DESC&ordenarPor=idLegislatura`);
         let json = await response.json();
         let allExpenses = ([...json.dados]);
         
@@ -34,7 +36,7 @@ export default function TotalExpensesCard({ selectedDeputy }) {
         const reducedExpenses = allExpenses.reduce((acc, item) => acc + Math.floor(item.valorLiquido), 0);
         // console.log(reducedExpenses);
 
-        setExpenses(allExpenses);
+        // setExpenses(allExpenses);
         setTotal(reducedExpenses);
 
       } catch (e) {

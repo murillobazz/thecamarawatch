@@ -3,39 +3,39 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
-import { Search, User } from "lucide-react";
+import { Search } from "lucide-react";
 import {
   Dialog,
   DialogContent,
-  DialogDescription,
+  // DialogDescription,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
 import ProfileCard from '@/components/profileCard';
 import TotalExpensesCard from '@/components/totalExpensesCard';
-
-
+import DeputyProps from './types/deputyProps';
 
 function Deps() {
   const [deputies, setDeputies] = useState([]);
   const [filteredDeputies, setFilteredDeputies] = useState([]);
-  const [selectedDeputy, setSelectedDeputy] = useState(null);
-  const [isLoading, setIsLoading] = useState(true);
+  const [selectedDeputy, setSelectedDeputy] = useState<DeputyProps | null>(null);
+  // TODO -> Implementar loading
+  // const [isLoading, setIsLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
-  const [deputyId, setDeputyId] = useState(null);
+  const [deputyId, setDeputyId] = useState<number | null>(null);
   const [open, setOpen] = useState(false);
 
-  const handleClick = (deputy: object) => {
+  const handleClick = (deputy: DeputyProps) => {
     setOpen(false);
-    setIsLoading(true);
+    // setIsLoading(true);
     setDeputyId(deputy.id);
   }
 
   useEffect(() => {
     const fetchDeputies = async () => {
       try {
-        console.log("fetchDeputies");
+        // console.log("fetchDeputies");
         const response = await fetch(`http://localhost:8010/proxy/deputados?ordem=ASC&ordenarPor=nome`);
         const json = await response.json();
         setDeputies(json.dados);
@@ -48,7 +48,7 @@ function Deps() {
   }, [])
 
   useEffect(() => {
-    const fetchDeputy = async (id) => {
+    const fetchDeputy = async (id: number) => {
       try {
         // const response = await fetch(`http://localhost:8010/proxy/deputados/${id}`);
         const response = await fetch(`https://dadosabertos.camara.leg.br/api/v2/proxy/deputados/${id}`);
@@ -58,7 +58,7 @@ function Deps() {
         console.log(e);
       }
 
-      setIsLoading(false);
+      // setIsLoading(false);
     }
 
     if (deputyId) {
@@ -68,7 +68,7 @@ function Deps() {
 
   useEffect(() => {
     const filteredDeputies = deputies
-      .filter(deputy =>
+      .filter((deputy: DeputyProps) =>
         deputy.nome.toLowerCase().includes(searchTerm.toLowerCase())
       )
       .slice(0, 20);
@@ -91,7 +91,7 @@ function Deps() {
               and remove your data from our servers.
             </DialogDescription> */}
             <ScrollArea type="always" className="max-h-72 w-full rounded-md border">
-              {filteredDeputies && filteredDeputies.map((deputy) => {
+              {filteredDeputies && filteredDeputies.map((deputy: DeputyProps) => {
                 return (
                   <div className="hover:cursor-pointer hover:bg-accent pt-2">
                     <Button variant="link" onClick={() => handleClick(deputy)} key={deputy.id} className="text-sm text-center pb-2">

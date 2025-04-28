@@ -9,8 +9,12 @@ import {
 } from "@/components/ui/table";
 import { Skeleton } from "@/components/ui/skeleton";
 
+interface propositionsTableProps {
+  propositions: Array<{id: string, siglaTipo: string, numero: number, ementa: string, ano: number}>,
+  isLoading: boolean
+}
 
-export function PropositionsTable({ propositions, isLoading }) {
+export function PropositionsTable({ propositions, isLoading }: propositionsTableProps) {
   if (isLoading) return (
     <Skeleton className="w-full min-h-[300px]"></Skeleton>
   )

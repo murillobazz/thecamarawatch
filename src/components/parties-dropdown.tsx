@@ -2,14 +2,20 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
+  // DropdownMenuLabel,
+  // DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
 import { Button } from "@/components/ui/button";
 
-export default function PartiesDropdown({ parties, setSelectedParty, isLoading }) {
+interface partiesDropdownProps {
+  parties: Array<{ id: string; sigla: string }>,
+  setSelectedParty: (party: { id: string; sigla: string }) => void,
+  isLoading: boolean
+}
+
+export default function PartiesDropdown({ parties, setSelectedParty, isLoading }: partiesDropdownProps) {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild disabled={isLoading ? true : false}>

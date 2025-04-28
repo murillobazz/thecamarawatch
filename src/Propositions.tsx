@@ -1,21 +1,25 @@
 import { useState, useEffect } from 'react';
 // import { useLocation } from 'react-router-dom';
-import { DatePicker } from "@/components/ui/datepicker";
-import MyChart from "@/components/ui/mychart";
+// import { DatePicker } from "@/components/ui/datepicker";
+// import MyChart from "@/components/ui/mychart";
 import PartiesDropdown from './components/parties-dropdown';
 import { PropositionsTable } from './components/propositions-table';
 
+interface selectedPartyProps {
+  id: string,
+  sigla: string
+}
 
 function Propositions() {
   const [parties, setParties] = useState([]);
   const [propositions, setPropositions] = useState([]);
-  const [date, setDate] = useState<DateRange | undefined>({ from: new Date(2024, 0, 1), to: new Date(2025, 0, 1) });
-  const [selectedParty, setSelectedParty] = useState(null);
+  // const [date, setDate] = useState<DateRange | undefined>({ from: new Date(2024, 0, 1), to: new Date(2025, 0, 1) });
+  const [selectedParty, setSelectedParty] = useState<selectedPartyProps|null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
-  const handleDate = (date: never) => {
-    setDate(date);
-  };
+  // const handleDate = (date: never) => {
+  //   setDate(date);
+  // };
 
   useEffect(() => {
     const fetchParties = async () => {
@@ -38,8 +42,9 @@ function Propositions() {
     const fetchPropositions = async () => {
       setIsLoading(true);
       try {
+        const date = { from: new Date(2024, 0, 1), to: new Date(2025, 0, 1) }
         // const response = await fetch(`http://localhost:8010/proxy/proposicoes?idPartidoAutor=${selectedParty.id}&ordem=DESC&dataInicio=${date.from.toISOString().split('T')[0]}&dataFim=${date.to.toISOString().split('T')[0]}`);
-        const response = await fetch(`https://dadosabertos.camara.leg.br/api/v2/proposicoes?idPartidoAutor=${selectedParty.id}&ordem=DESC&dataInicio=${date.from.toISOString().split('T')[0]}&dataFim=${date.to.toISOString().split('T')[0]}`);
+        const response = await fetch(`https://dadosabertos.camara.leg.br/api/v2/proposicoes?idPartidoAutor=${selectedParty?.id}&ordem=DESC&dataInicio=${date.from.toISOString().split('T')[0]}&dataFim=${date.to.toISOString().split('T')[0]}`);
         const json = await response.json();
         setPropositions(json.dados);
         // console.log(propositions);

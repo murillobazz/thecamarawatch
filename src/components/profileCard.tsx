@@ -1,15 +1,16 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
+  // CardContent,
+  // CardDescription,
+  // CardFooter,
+  // CardHeader,
+  // CardTitle,
 } from "@/components/ui/card";
 import { User } from "lucide-react";
+import DeputyProps from '@/types/deputyProps';
 
-export default function ProfileCard({ selectedDeputy }) {
+export default function ProfileCard({ selectedDeputy }: { selectedDeputy: DeputyProps | null }) {
   if (selectedDeputy) {
     return (
       <Card className="p-4 w-full max-w-[420px]">
