@@ -52,7 +52,7 @@ function Deps() {
     const fetchDeputy = async (id: number) => {
       try {
         // const response = await fetch(`http://localhost:8010/proxy/deputados/${id}`);
-        const response = await fetch(`https://dadosabertos.camara.leg.br/api/v2/proxy/deputados/${id}`);
+        const response = await fetch(`https://dadosabertos.camara.leg.br/api/v2/deputados/${id}`);
         const json = await response.json();
         setSelectedDeputy(json.dados);
       } catch (e) {
