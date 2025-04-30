@@ -51,7 +51,7 @@ export default function TotalExpensesCard({ selectedDeputy }: { selectedDeputy: 
 
   if (selectedDeputy) {
     return (
-      <Card className="p-4 w-full max-w-[420px]">
+      <Card className="w-full max-w-[420px]">
         <CardHeader>
           <CardTitle>Gasto Total</CardTitle>
           <CardDescription>Valor total gasto pelo deputado em seu atual mandato</CardDescription>

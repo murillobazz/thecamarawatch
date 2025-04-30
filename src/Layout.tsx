@@ -1,4 +1,3 @@
-// Layout.js
 import { Outlet } from 'react-router-dom';
 import { ThemeProvider } from './components/theme-provider';
 import { ModeToggle } from './components/mode-toggle';
@@ -12,7 +11,7 @@ function Layout() {
     <ThemeProvider>
       <header>
         <nav className="flex flex-col sm:flex-row gap-[1ch]">
-          <Link className="flex items-center" to="/">
+          <Link className="flex items-center" to="/" viewTransition>
             <div className="text-left">
               <h1 className="font-bold tracking-tighter">TheCamaraWatch</h1><Separator />
               {/* <p><small>Dados sobre a Câmara dos Deputados</small></p> */}

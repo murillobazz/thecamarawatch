@@ -14,12 +14,14 @@ import {
 } from "@/components/ui/dialog";
 import ProfileCard from '@/components/profileCard';
 import TotalExpensesCard from '@/components/totalExpensesCard';
-import DeputyProps from './types/deputyProps';
+import DeputyProps from '@/types/deputyProps';
+import { PropositionsTable } from './components/propositions-table';
 
 function Deps() {
-  const [deputies, setDeputies] = useState([]);
-  const [filteredDeputies, setFilteredDeputies] = useState([]);
+  const [deputies, setDeputies] = useState<DeputyProps[]>([]);
+  const [filteredDeputies, setFilteredDeputies] = useState<DeputyProps[]>([]);
   const [selectedDeputy, setSelectedDeputy] = useState<DeputyProps | null>(null);
+  const [deputyPropositions, setDeputyPropositions] = useState([]);
   // TODO -> Implementar loading
   // const [isLoading, setIsLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
@@ -76,6 +78,24 @@ function Deps() {
     if (searchTerm) setFilteredDeputies(filteredDeputies);
   }, [searchTerm, deputies])
 
+  useEffect(() => {
+    const fetchDeputyPropositions = async (deputy: DeputyProps) => {
+      try {
+        const dataFim = new Date().toISOString().split('T', 1)[0];
+        // const response = await fetch(`http://localhost:8010/proxy/deputados/${id}`);
+        const response = await fetch(`https://dadosabertos.camara.leg.br/api/v2/proposicoes?ordem=DESC&siglaTipo=PL&idDeputadoAutor=${deputy.id}&dataApresentacaoInicio=${deputy.ultimoStatus.data}&dataApresentacaoFim=${dataFim}&itens=100`);
+        const json = await response.json();
+        setDeputyPropositions(json.dados)
+      } catch (e) {
+        console.log(e);
+      }
+    }
+
+    if (selectedDeputy) {
+      fetchDeputyPropositions(selectedDeputy);
+    }
+  }, [selectedDeputy])
+
   return (
     <>
       {/* <h1 className="mb-4">Deputados</h1> */}
@@ -111,6 +131,7 @@ function Deps() {
         <TotalExpensesCard selectedDeputy={selectedDeputy} />
         {/* <ExpensesCard selectedDeputy={selectedDeputy} /> */}
       </div>
+      {selectedDeputy && <PropositionsTable propositions={deputyPropositions} isLoading={false}></PropositionsTable>}
     </>
   )
 }

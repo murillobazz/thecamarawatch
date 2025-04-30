@@ -16,12 +16,12 @@ export default function Nav() {
     <NavigationMenu>
       <NavigationMenuList>
         <NavigationMenuItem className={navigationMenuTriggerStyle()}>
-          <Link to="/deputados">
+          <Link to="/deputados" viewTransition>
             <p className="text-xs">Deputados</p>
           </Link>
         </NavigationMenuItem>
         <NavigationMenuItem className={navigationMenuTriggerStyle()}>
-          <Link to="/proposicoes">
+          <Link to="/proposicoes" viewTransition>
             <p className="text-xs">Proposições</p>
           </Link>
         </NavigationMenuItem>

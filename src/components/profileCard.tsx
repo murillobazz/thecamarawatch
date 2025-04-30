@@ -13,7 +13,7 @@ import DeputyProps from '@/types/deputyProps';
 export default function ProfileCard({ selectedDeputy }: { selectedDeputy: DeputyProps | null }) {
   if (selectedDeputy) {
     return (
-      <Card className="p-4 w-full max-w-[420px]">
+      <Card className="p-6 w-full max-w-[420px]">
         <div className="flex gap-4">
           <Avatar className="w-[64px] h-[64px]">
             <AvatarImage src={selectedDeputy.ultimoStatus.urlFoto} />
