@@ -17,6 +17,7 @@ export function PropositionsTable({ propositions, isLoading }: propositionsTable
   if (isLoading) return (
     <Skeleton className="w-full min-h-[300px]"></Skeleton>
   )
+
   // TODO -> Adicionar paginação
   return (
     <div className="border rounded-xl py-2">

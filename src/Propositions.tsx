@@ -66,16 +66,8 @@ function Propositions() {
         <PartiesDropdown parties={parties} setSelectedParty={setSelectedParty} isLoading={isLoading}></PartiesDropdown>
       </div>
       <div className="flex flex-col items-center justify-center mb-3">
-        {selectedParty && <p className="mb-3 font-bold text-xl">{selectedParty.sigla}</p>}
-        {/* {propositions && propositions.map((item) => {
-        return (
-          <div key={item.id} className="mb-4">
-            <p>{item.ementa}</p>
-            <p>{item.ano}</p>
-          </div>
-        )
-      })} */}
-        <PropositionsTable propositions={propositions} isLoading={isLoading}></PropositionsTable>
+        {selectedParty && <p className="mb-3 font-bold text-xl text-center">{selectedParty.sigla}<br /><span className="text-sm font-normal">Propostas recentes</span></p>}
+        {selectedParty ? <PropositionsTable propositions={propositions} isLoading={isLoading}></PropositionsTable> : <p>Selecione um partido</p>}
         {/* <MyChart propositions={propositions} parties={parties}></MyChart> */}
       </div>
     </>

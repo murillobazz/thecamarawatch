@@ -19,7 +19,7 @@ export default function PartiesDropdown({ parties, setSelectedParty, isLoading }
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild disabled={isLoading ? true : false}>
-        <Button variant="outline" className="hover:cursor-pointer">{isLoading ? "Carregando..." : "Selecione um Partido"}</Button>
+        <Button variant="outline" className="hover:cursor-pointer">{isLoading ? "Carregando..." : "Selecionar"}</Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent>
         {parties && parties.map((item: { id: string; sigla: string; }) => {
