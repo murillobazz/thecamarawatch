@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
-import { Skeleton } from "./components/ui/skeleton";
+// import { Skeleton } from "./components/ui/skeleton";
 
 export default function Home() {
-  const [isLoading, setIsLoading] = useState<boolean>(true);
+  // const [isLoading, setIsLoading] = useState<boolean>(true);
   const [deputiesCount, setDeputiesCount] = useState<number | null>(null);
   const [partiesCount, setPartiesCount] = useState<number | null>(null);
   const [propositionsCount, setPropositionsCount] = useState<number | null>(null);
@@ -46,7 +46,7 @@ export default function Home() {
     }
 
     Promise.all([fetchDeputiesCount(), fetchPartiesCount(), fetchPropositionsCount()]);
-    setIsLoading(false);
+    // setIsLoading(false);
   }, [])
 
   return (
