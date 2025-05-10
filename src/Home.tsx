@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
-// import { Skeleton } from "./components/ui/skeleton";
+import CustomCard from "./components/customCard";
+import { CardContent } from "./components/ui/card";
 
 export default function Home() {
-  // const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
   const [deputiesCount, setDeputiesCount] = useState<number | null>(null);
   const [partiesCount, setPartiesCount] = useState<number | null>(null);
   const [propositionsCount, setPropositionsCount] = useState<number | null>(null);
@@ -46,16 +47,35 @@ export default function Home() {
     }
 
     Promise.all([fetchDeputiesCount(), fetchPartiesCount(), fetchPropositionsCount()]);
-    // setIsLoading(false);
+    setIsLoading(false);
   }, [])
 
   return (
-    <div className="text-center">
-      <h1>Visualização de dados abertos da Câmara de Deputados</h1>
-      <p><small>Selecione uma das abas no menu acima</small></p>
-      {deputiesCount && <p>Número de deputados na Câmara: {deputiesCount}</p>}
-      {partiesCount && <p>Número de partidos representados na Câmara: {partiesCount}</p>}
-      {propositionsCount && <p>Número de propostas apresentadas na Câmara no ano atual: {propositionsCount}</p>}
-    </div>
+    <>
+      <div className="text-center mb-4">
+        <h1 className="font-bold">Visualização de dados abertos da Câmara de Deputados</h1>
+        <p><small>Selecione uma das abas no menu acima</small></p>
+      </div>
+      <div className="grid md:grid-cols-3 grid-cols-1 grid-rows-3 gap-2 max-w-fit mx-auto">
+        <CustomCard isLoading={isLoading}>
+          <CardContent className="h-full flex flex-col justify-between text-left">
+            <p><b>Deputados</b> em exercício</p>
+            {deputiesCount && <p className="text-[2.4rem] font-bold">{deputiesCount}</p>}
+          </CardContent>
+        </CustomCard>
+        <CustomCard isLoading={isLoading}>
+          <CardContent className="h-full flex flex-col justify-between text-left">
+            <p><b>Partidos</b> representados</p>
+            {partiesCount && <p className="text-[2.4rem] font-bold">{partiesCount}</p>}
+          </CardContent>
+        </CustomCard>
+        <CustomCard isLoading={isLoading}>
+          <CardContent className="h-full flex flex-col justify-between text-left">
+            <p><b>Propostas</b> apresentadas no ano atual</p>
+            {propositionsCount && <p className="text-[2.4rem] font-bold">{propositionsCount}</p>}
+          </CardContent>
+        </CustomCard>
+      </div>
+    </>
   )
 }
