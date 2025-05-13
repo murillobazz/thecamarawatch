@@ -16,7 +16,7 @@ export default function CustomCard({ children, isLoading }: customCardProps) {
   }
 
   return (
-    <Card className="max-w-[360px]">
+    <Card className="max-w-full">
       {children}
     </Card>
   )
