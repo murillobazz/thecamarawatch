@@ -74,7 +74,7 @@ export default function Home() {
         {/* <p><small>Selecione uma das abas no menu acima</small></p> */}
       </div>
       <div className="flex md:flex-row flex-col gap-2 max-w-full mx-auto">
-        <div className="grid grid-rows-3 grid-cols-1 gap-2">
+        <div className="grid grid-rows-3 grid-cols-1 gap-2 basis-1/3">
           <CustomCard isLoading={isLoading}>
             <CardContent className="h-full flex flex-col justify-between text-left">
               <p><b>Deputados</b> em exercício</p>
@@ -106,7 +106,7 @@ export default function Home() {
             </CardContent>
           </CustomCard>
         </div>
-        <div className="">
+        <div className="basis-2/3">
           <CustomCard isLoading={isLoading}>
             <CardContent className="h-full flex flex-col justify-between text-left">
               <p><b>Deputados</b> por estado</p>

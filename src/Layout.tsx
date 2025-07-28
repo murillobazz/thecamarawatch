@@ -22,7 +22,7 @@ function Layout() {
         <ModeToggle></ModeToggle>
       </header>
       <Separator></Separator>
-      <main>
+      <main className="h-full">
         <Outlet />
       </main>
       <footer className="absolute bottom-0 w-full flex justify-center p-1">

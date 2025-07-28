@@ -14,111 +14,111 @@ const chartConfig = {
     label: "Número de deputados no estado:\x20"
   },
   AC: {
-    label: "AC",
+    label: "Acre",
     color: "hsl(var(--chart-1))",
   },
   AL: {
-    label: "AL",
+    label: "Alagoas",
     color: "hsl(var(--chart-2))",
   },
   AP: {
-    label: "AP",
+    label: "Amapá",
     color: "hsl(var(--chart-3))",
   },
   AM: {
-    label: "AM",
+    label: "Amazonas",
     color: "hsl(var(--chart-4))",
   },
   BA: {
-    label: "BA",
+    label: "Bahia",
     color: "hsl(var(--chart-5))",
   },
   CE: {
-    label: "CE",
+    label: "Ceará",
     color: "hsl(var(--chart-5))",
   },
   DF: {
-    label: "DF",
+    label: "Distrito Federal",
     color: "hsl(var(--chart-5))",
   },
   ES: {
-    label: "ES",
+    label: "Espírito Santo",
     color: "hsl(var(--chart-5))",
   },
   GO: {
-    label: "GO",
+    label: "Goiás",
     color: "hsl(var(--chart-5))",
   },
   MA: {
-    label: "MA",
+    label: "Maranhão",
     color: "hsl(var(--chart-5))",
   },
   MT: {
-    label: "MT",
+    label: "Mato Grosso",
     color: "hsl(var(--chart-5))",
   },
   MS: {
-    label: "MS",
+    label: "Mato Grosso do Sul",
     color: "hsl(var(--chart-5))",
   },
   MG: {
-    label: "MG",
+    label: "Minas Gerais",
     color: "hsl(var(--chart-5))",
   },
   PA: {
-    label: "PA",
+    label: "Pará",
     color: "hsl(var(--chart-5))",
   },
   PB: {
-    label: "PB",
+    label: "Paraíba",
     color: "hsl(var(--chart-5))",
   },
   PR: {
-    label: "PR",
+    label: "Paraná",
     color: "hsl(var(--chart-5))",
   },
   PE: {
-    label: "PE",
+    label: "Pernambuco",
     color: "hsl(var(--chart-5))",
   },
   PI: {
-    label: "PI",
+    label: "Piauí",
     color: "hsl(var(--chart-5))",
   },
   RJ: {
-    label: "RJ",
+    label: "Rio de Janeiro",
     color: "hsl(var(--chart-5))",
   },
   RN: {
-    label: "RN",
+    label: "Rio Grande do Norte",
     color: "hsl(var(--chart-5))",
   },
   RS: {
-    label: "RS",
+    label: "Rio Grande do Sul",
     color: "hsl(var(--chart-5))",
   },
   RO: {
-    label: "RO",
+    label: "Rondônia",
     color: "hsl(var(--chart-5))",
   },
   RR: {
-    label: "RR",
+    label: "Roraima",
     color: "hsl(var(--chart-5))",
   },
   SC: {
-    label: "SC",
+    label: "Santa Catarina",
     color: "hsl(var(--chart-5))",
   },
   SP: {
-    label: "SP",
+    label: "São Paulo",
     color: "hsl(var(--chart-5))",
   },
   SE: {
-    label: "SE",
+    label: "Sergipe",
     color: "hsl(var(--chart-5))",
   },
   TO: {
-    label: "TO",
+    label: "Tocantins",
     color: "hsl(var(--chart-5))",
   },
 } satisfies ChartConfig
@@ -127,21 +127,18 @@ export default function DeputiesStateChart({ chartData }: { chartData: object[] 
   return (
     <ChartContainer
       config={chartConfig}
-      className="mx-auto h-[400px] aspect-square max-h-full max-w-full [&_.recharts-text]:fill-background"
+      className="mx-auto h-[640px] aspect-square max-h-full max-w-full [&_.recharts-text]:fill-foreground"
     >
       <PieChart>
         <ChartTooltip
-          content={<ChartTooltipContent nameKey="states" />}
+          content={<ChartTooltipContent nameKey="name" />}
         />
         <Pie data={chartData} dataKey="value">
           <LabelList
             dataKey="name"
-            className="fill-gray-900 font-bold"
             stroke="none"
-            fontSize={10}
-            formatter={(value: keyof typeof chartConfig) =>
-              chartConfig[value]?.label
-            }
+            fontSize={12}
+            position="outside"
           />
         </Pie>
       </PieChart>
