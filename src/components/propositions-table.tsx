@@ -18,7 +18,6 @@ export function PropositionsTable({ propositions, isLoading }: propositionsTable
     <Skeleton className="w-full min-h-[300px]"></Skeleton>
   )
 
-  // TODO -> Adicionar paginação
   return (
     <div className="border rounded-xl py-2">
       <Table>
@@ -36,7 +35,13 @@ export function PropositionsTable({ propositions, isLoading }: propositionsTable
               <TableRow key={item.id} className="text-left px-4">
                 <TableCell>{item.siglaTipo}</TableCell>
                 <TableCell>{item.numero}</TableCell>
-                <TableCell className="w-3xl text-left"><p style={{ whiteSpace: 'normal' }}>{(item.ementa)}</p></TableCell>
+                <TableCell className="w-full text-left">
+                  <p style={{ whiteSpace: 'normal' }}>
+                    <span className={item.ementa ? "" : "italic"}>
+                      {(item.ementa ? item.ementa : "Informação de Ementa não registrada")}
+                    </span>
+                  </p>
+                </TableCell>
                 <TableCell className="text-right">{item.ano === 0 ? "2025" : item.ano}</TableCell>
               </TableRow>
             )

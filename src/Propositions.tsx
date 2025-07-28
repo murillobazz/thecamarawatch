@@ -1,26 +1,21 @@
 import { useState, useEffect } from 'react';
-// import { useLocation } from 'react-router-dom';
-// import { DatePicker } from "@/components/ui/datepicker";
-// import MyChart from "@/components/ui/mychart";
 import PartiesDropdown from './components/parties-dropdown';
 import { PropositionsTable } from './components/propositions-table';
+import { Button } from './components/ui/button';
+import { Input } from './components/ui/input';
 
 interface selectedPartyProps {
   id: string,
   sigla: string
 }
+// TODO - Melhorar paginação
 
 function Propositions() {
   const [parties, setParties] = useState([]);
   const [propositions, setPropositions] = useState([]);
-  // const [date, setDate] = useState<DateRange | undefined>({ from: new Date(2024, 0, 1), to: new Date(2025, 0, 1) });
-  const [selectedParty, setSelectedParty] = useState<selectedPartyProps|null>(null);
+  const [selectedParty, setSelectedParty] = useState<selectedPartyProps | null>(null);
+  const [currentPage, setCurrentPage] = useState(1);
   const [isLoading, setIsLoading] = useState(true);
-
-  // const handleDate = (date: never) => {
-  //   setDate(date);
-  // };
-
   useEffect(() => {
     const fetchParties = async () => {
       try {
@@ -28,7 +23,6 @@ function Propositions() {
         const response = await fetch(`https://dadosabertos.camara.leg.br/api/v2/partidos?itens=99`);
         const json = await response.json();
         setParties(json.dados);
-        // console.log(parties);
       } catch (e) {
         console.error('Error fetching data:', e);
       }
@@ -44,10 +38,9 @@ function Propositions() {
       try {
         const date = { from: new Date(2024, 0, 1), to: new Date(2025, 0, 1) }
         // const response = await fetch(`http://localhost:8010/proxy/proposicoes?idPartidoAutor=${selectedParty.id}&ordem=DESC&dataInicio=${date.from.toISOString().split('T')[0]}&dataFim=${date.to.toISOString().split('T')[0]}`);
-        const response = await fetch(`https://dadosabertos.camara.leg.br/api/v2/proposicoes?idPartidoAutor=${selectedParty?.id}&ordem=DESC&dataInicio=${date.from.toISOString().split('T')[0]}&dataFim=${date.to.toISOString().split('T')[0]}`);
+        const response = await fetch(`https://dadosabertos.camara.leg.br/api/v2/proposicoes?idPartidoAutor=${selectedParty?.id}&ordem=DESC&dataInicio=${date.from.toISOString().split('T')[0]}&dataFim=${date.to.toISOString().split('T')[0]}&itens=10&pagina=${currentPage}`);
         const json = await response.json();
         setPropositions(json.dados);
-        // console.log(propositions);
       } catch (e) {
         console.error('Error fetching data:', e);
       }
@@ -57,18 +50,30 @@ function Propositions() {
     if (selectedParty) {
       fetchPropositions();
     }
-  }, [selectedParty])
+  }, [selectedParty, currentPage])
 
   return (
     <>
-      <div className="flex justify-between mb-3">
-        {/* <DatePicker sendDateToParent={handleDate}></DatePicker> */}
+      <div className="flex justify-between items-center mb-2">
+        <p className="mb-0 font-bold text-xl text-center flex flex-col">
+          {selectedParty ? selectedParty.sigla : "Selecione um partido"}
+          {selectedParty && <span className="text-sm font-normal">Propostas recentes</span>}
+        </p>
         <PartiesDropdown parties={parties} setSelectedParty={setSelectedParty} isLoading={isLoading}></PartiesDropdown>
       </div>
       <div className="flex flex-col items-center justify-center mb-3">
-        {selectedParty && <p className="mb-3 font-bold text-xl text-center">{selectedParty.sigla}<br /><span className="text-sm font-normal">Propostas recentes</span></p>}
-        {selectedParty ? <PropositionsTable propositions={propositions} isLoading={isLoading}></PropositionsTable> : <p>Selecione um partido</p>}
-        {/* <MyChart propositions={propositions} parties={parties}></MyChart> */}
+        {selectedParty && <PropositionsTable propositions={propositions} isLoading={isLoading}></PropositionsTable>}
+        {selectedParty &&
+          <div className="flex gap-1 mt-2">
+            <Button variant="ghost" className="hover:cursor-pointer" disabled={currentPage === 1 || isLoading} onClick={() => setCurrentPage(currentPage - 1)}>
+              Anterior
+            </Button>
+            <Input type="number" value={currentPage} onChange={(event) => setCurrentPage(Number(event.target.value))} disabled={isLoading} className="w-16 text-center"></Input>
+            <Button variant="ghost" className="hover:cursor-pointer" onClick={() => setCurrentPage(currentPage + 1)} disabled={isLoading}>
+              Próximo
+            </Button>
+          </div>
+        }
       </div>
     </>
   )
