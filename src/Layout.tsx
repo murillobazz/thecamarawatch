@@ -25,7 +25,7 @@ function Layout() {
       <main className="h-full">
         <Outlet />
       </main>
-      <footer className="absolute bottom-0 w-full flex justify-center p-1">
+      <footer className="md:absolute bottom-0 w-full flex justify-center p-1">
         <p className="text-xs">Made by <a href="https://github.com/murillobazz" target="_blank" className="font-bold">murillobazz</a></p>
       </footer>
     </ThemeProvider>

@@ -80,8 +80,8 @@ export default function Home() {
               <p><b>Deputados</b> em exercício</p>
               {
                 deputiesCount ?
-                  <p className="text-[2.4rem] font-bold">{deputiesCount}</p> :
-                  <Skeleton className="h-[2.4rem] w-[3rem] mt-4"></Skeleton>
+                  <p className="text-[4rem] font-bold">{deputiesCount}</p> :
+                  <Skeleton className="h-[4rem] w-[3rem] mt-4"></Skeleton>
               }
             </CardContent>
           </CustomCard>
@@ -90,8 +90,8 @@ export default function Home() {
               <p><b>Partidos</b> representados</p>
               {
                 partiesCount ? 
-                  <p className="text-[2.4rem] font-bold">{partiesCount}</p> :
-                  <Skeleton className="h-[2.4rem] w-[3rem] mt-4"></Skeleton>
+                  <p className="text-[4rem] font-bold">{partiesCount}</p> :
+                  <Skeleton className="h-[4rem] w-[3rem] mt-4"></Skeleton>
               }
             </CardContent>
           </CustomCard>
@@ -100,8 +100,8 @@ export default function Home() {
               <p><b>Propostas</b> apresentadas no ano atual</p>
               {
                 propositionsCount ? 
-                  <p className="text-[2.4rem] font-bold">{propositionsCount.toLocaleString('pt-br')}</p> :
-                  <Skeleton className="h-[2.4rem] w-[6rem] mt-4"></Skeleton>
+                  <p className="text-[4rem] font-bold">{propositionsCount.toLocaleString('pt-br')}</p> :
+                  <Skeleton className="h-[4rem] w-[6rem] mt-4"></Skeleton>
               }
             </CardContent>
           </CustomCard>

@@ -125,23 +125,27 @@ const chartConfig = {
 
 export default function DeputiesStateChart({ chartData }: { chartData: object[] }) {
   return (
-    <ChartContainer
-      config={chartConfig}
-      className="mx-auto h-[640px] aspect-square max-h-full max-w-full [&_.recharts-text]:fill-foreground"
-    >
-      <PieChart>
-        <ChartTooltip
-          content={<ChartTooltipContent nameKey="name" />}
-        />
-        <Pie data={chartData} dataKey="value">
-          <LabelList
-            dataKey="name"
-            stroke="none"
-            fontSize={12}
-            position="outside"
+    <div>
+      <ChartContainer
+        config={chartConfig}
+        className="mx-auto md:h-[640px] h-full aspect-square max-h-full max-w-full [&_.recharts-text]:fill-foreground"
+      >
+        <PieChart>
+          <ChartTooltip
+            content={<ChartTooltipContent nameKey="name" />}
           />
-        </Pie>
-      </PieChart>
-    </ChartContainer>
+          <Pie data={chartData} dataKey="value">
+            <LabelList
+              dataKey="name"
+              stroke="none"
+              fontWeight="600"
+              fontSize={12}
+              position="outside"
+            />
+          </Pie>
+        </PieChart>
+      </ChartContainer>
+      <p className="text-center text-xs">{window.innerWidth >= 768 ? "Passe o mouse" : "Clique"} para visualizar a quantidade</p>
+    </div>
   )
 }
