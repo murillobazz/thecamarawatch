@@ -22,8 +22,9 @@ function Deps() {
   const [filteredDeputies, setFilteredDeputies] = useState<DeputyProps[]>([]);
   const [selectedDeputy, setSelectedDeputy] = useState<DeputyProps | null>(null);
   const [deputyPropositions, setDeputyPropositions] = useState([]);
-  // TODO -> Implementar loading
-  // const [isLoading, setIsLoading] = useState(true);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [lastPage, setLastPage] = useState(1);
+  const [isLoading, setIsLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
   const [deputyId, setDeputyId] = useState<number | null>(null);
   const [open, setOpen] = useState(false);
@@ -44,6 +45,8 @@ function Deps() {
         setDeputies(json.dados);
       } catch (e) {
         console.log(e);
+      } finally {
+        setIsLoading(false);
       }
     }
 
@@ -56,6 +59,7 @@ function Deps() {
         // const response = await fetch(`http://localhost:8010/proxy/deputados/${id}`);
         const response = await fetch(`https://dadosabertos.camara.leg.br/api/v2/deputados/${id}`);
         const json = await response.json();
+        setCurrentPage(1);
         setSelectedDeputy(json.dados);
       } catch (e) {
         console.log(e);
@@ -81,20 +85,32 @@ function Deps() {
   useEffect(() => {
     const fetchDeputyPropositions = async (deputy: DeputyProps) => {
       try {
+        setIsLoading(true);
         const dataFim = new Date().toISOString().split('T', 1)[0];
-        // const response = await fetch(`http://localhost:8010/proxy/deputados/${id}`);
-        const response = await fetch(`https://dadosabertos.camara.leg.br/api/v2/proposicoes?ordem=DESC&siglaTipo=PL&idDeputadoAutor=${deputy.id}&dataApresentacaoInicio=${deputy.ultimoStatus.data}&dataApresentacaoFim=${dataFim}&itens=100`);
+        const response = await fetch(`https://dadosabertos.camara.leg.br/api/v2/proposicoes?ordem=DESC&siglaTipo=PL&idDeputadoAutor=${deputy.id}&dataApresentacaoInicio=${deputy.ultimoStatus.data}&dataApresentacaoFim=${dataFim}&itens=10&pagina=${currentPage}`);
         const json = await response.json();
-        setDeputyPropositions(json.dados)
+        
+        // Seta última página
+        const url = json.links.filter((link: {href: string, rel: string}) => link.rel === 'last');
+        let newLastPage = url[0].href.split('&').find((item: string) => item.includes('pagina'));
+        newLastPage = Number(newLastPage.split('=')[1]);
+        setLastPage(newLastPage);
+
+        // Verifica se a página tem dados antes de trazer para o state
+        if (json.dados.length > 0) {
+          setDeputyPropositions(json.dados);
+        }
       } catch (e) {
         console.log(e);
+      } finally {
+        setIsLoading(false);
       }
     }
 
     if (selectedDeputy) {
       fetchDeputyPropositions(selectedDeputy);
     }
-  }, [selectedDeputy])
+  }, [selectedDeputy, currentPage])
 
   return (
     <>
@@ -126,12 +142,23 @@ function Deps() {
           </DialogHeader>
         </DialogContent>
       </Dialog>
-      <div className="flex flex-col items-start justify-center gap-4 py-4 md:gap-6 md:py-6 max-h-[360px]">
+      <div className="flex flex-col items-start justify-center gap-4 py-4 md:gap-2 md:py-2 max-h-[360px]">
         <ProfileCard selectedDeputy={selectedDeputy} />
         <TotalExpensesCard selectedDeputy={selectedDeputy} />
         {/* <ExpensesCard selectedDeputy={selectedDeputy} /> */}
       </div>
-      {selectedDeputy && <PropositionsTable propositions={deputyPropositions} isLoading={false}></PropositionsTable>}
+      {selectedDeputy && <PropositionsTable propositions={deputyPropositions} isLoading={isLoading}></PropositionsTable>}
+      {selectedDeputy && 
+        <div className="flex gap-1 mt-2">
+          <Button variant="ghost" className="hover:cursor-pointer" disabled={currentPage === 1 || isLoading} onClick={() => setCurrentPage(currentPage - 1)}>
+            Anterior
+          </Button>
+          <Input type="number" value={currentPage} onChange={(event) => setCurrentPage(Number(event.target.value))} disabled className="w-16 text-center"></Input>
+          <Button variant="ghost" className="hover:cursor-pointer" onClick={() => setCurrentPage(currentPage + 1)} disabled={isLoading || currentPage === lastPage}>
+            Próximo
+          </Button>
+        </div>
+      }
     </>
   )
 }
