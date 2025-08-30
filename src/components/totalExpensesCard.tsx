@@ -19,24 +19,20 @@ export default function TotalExpensesCard({ selectedDeputy }: { selectedDeputy: 
     // TODO -> Adicionar um loading para atualização dos valores (está com delay entre o profileCard e o totalExpensesCard)
     const fetchExpenses = async () => {
       try {
-        // let response = await fetch(`http://localhost:8010/proxy/deputados/${selectedDeputy?.id}/despesas?idLegislatura=${selectedDeputy?.ultimoStatus.idLegislatura}&pagina=1&&ano=2025&itens=100&ordem=DESC&ordenarPor=idLegislatura`);
+        // Define como nulo para quando houver troca de um deputado para outro: havia um delay entre o valor do card e o deputado selecionado.
+        setTotal(null);
+
         let response = await fetch(`https://dadosabertos.camara.leg.br/api/v2/deputados/${selectedDeputy?.id}/despesas?idLegislatura=${selectedDeputy?.ultimoStatus.idLegislatura}&pagina=1&&ano=2025&itens=100&ordem=DESC&ordenarPor=idLegislatura`);
         let json = await response.json();
         let allExpenses = ([...json.dados]);
         
         while (json.links[1]?.rel === "next") {
-          // console.log("whileloop")
           response = await fetch(json.links[1]?.href);
           json = await response.json();
           allExpenses = [...allExpenses, ...json.dados];
         }
-
-        // console.log("allExpenses", allExpenses);
-
+        
         const reducedExpenses = allExpenses.reduce((acc, item) => acc + Math.floor(item.valorLiquido), 0);
-        // console.log(reducedExpenses);
-
-        // setExpenses(allExpenses);
         setTotal(reducedExpenses);
 
       } catch (e) {

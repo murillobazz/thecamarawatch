@@ -128,7 +128,7 @@ export default function DeputiesStateChart({ chartData }: { chartData: object[] 
     <div>
       <ChartContainer
         config={chartConfig}
-        className="mx-auto md:h-[640px] h-full aspect-square max-h-full max-w-full [&_.recharts-text]:fill-foreground"
+        className="mx-auto md:h-[400px] h-full aspect-square max-h-full max-w-full [&_.recharts-text]:fill-foreground"
       >
         <PieChart>
           <ChartTooltip

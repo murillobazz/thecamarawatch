@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import PartiesDropdown from './components/parties-dropdown';
-import { PropositionsTable } from './components/propositions-table';
+import { PropositionsTable } from './components/propositionsTable';
 import { Button } from './components/ui/button';
 import { Input } from './components/ui/input';
 

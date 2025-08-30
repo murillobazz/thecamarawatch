@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import CustomCard from "./components/customCard";
 import DeputiesStateChart from "./components/deputiesStateChart";
 import { CardContent } from "./components/ui/card";
-import { format } from "date-fns";
+// import { format } from "date-fns";
 import { statesList } from "./lib/utils";
 import { Skeleton } from "./components/ui/skeleton";
 
@@ -45,19 +45,25 @@ export default function Home() {
     }
 
     const fetchPropositionsCount = async () => {
+      // A API MUDOU O FUNCIONAMENTO E AGORA O VALOR ENTRE DATAS NÃO PODE PASSAR DE 3 MESES
+      // Portanto deverá ser usado um ano especificamente, e não mais puxar o tempo todo de mandato.
+
       const currentYear = new Date().getFullYear();
-      const yearStart = format(new Date(currentYear, 0, 1), "yyyy-MM-dd");
-      const yearEnd = format(new Date(currentYear, 11, 31), "yyyy-MM-dd");
-      // const firstPage = await fetch(`https://dadosabertos.camara.leg.br/api/v2/proposicoes?ano=${currentYear}&pagina=1&itens=99&ordem=ASC&ordenarPor=id`);
-      const firstPage = await fetch(`https://dadosabertos.camara.leg.br/api/v2/proposicoes?dataApresentacaoInicio=${yearStart}&dataApresentacaoFim=${yearEnd}&pagina=1&itens=99&ordem=ASC&ordenarPor=id`);
+      // const yearStart = format(new Date(currentYear, 0, 1), "yyyy-MM-dd");
+      // const yearEnd = format(new Date(currentYear, 11, 31), "yyyy-MM-dd");
+      const firstPage = await fetch(`https://dadosabertos.camara.leg.br/api/v2/proposicoes?ano=${currentYear}&codSituacao=240&pagina=1&itens=99&ordem=ASC&ordenarPor=id`);
+      // const firstPage = await fetch(`https://dadosabertos.camara.leg.br/api/v2/proposicoes?dataApresentacaoInicio=${yearStart}&dataApresentacaoFim=${yearEnd}&pagina=1&itens=99&ordem=ASC&ordenarPor=id`);
       const firstJson = await firstPage.json();
       const lastPageLink = firstJson.links.find((item: { rel: string, href: string }) => item.rel === 'last').href.split('&');
       const numberOfPages = lastPageLink.find((item: string) => item.startsWith('pagina')).split('=')[1];
 
-      // const lastPage = await fetch(`https://dadosabertos.camara.leg.br/api/v2/proposicoes?ano=${currentYear}&pagina=${numberOfPages}&itens=99&ordem=ASC&ordenarPor=id`);
-      const lastPage = await fetch(`https://dadosabertos.camara.leg.br/api/v2/proposicoes?dataApresentacaoInicio=${yearStart}&dataApresentacaoFim=${yearEnd}&pagina=${numberOfPages}&itens=99&ordem=ASC&ordenarPor=id`);
+      const lastPage = await fetch(`https://dadosabertos.camara.leg.br/api/v2/proposicoes?ano=${currentYear}&codSituacao=240&pagina=${numberOfPages}&itens=99&ordem=ASC&ordenarPor=id`);
+      // const lastPage = await fetch(`https://dadosabertos.camara.leg.br/api/v2/proposicoes?dataApresentacaoInicio=${yearStart}&dataApresentacaoFim=${yearEnd}&pagina=${numberOfPages}&itens=99&ordem=ASC&ordenarPor=id`);
       const lastJson = await lastPage.json();
       const lastPageCount = lastJson.dados.length;
+
+      // const dataFim = new Date().toISOString().split('T', 1)[0];
+      // const dataInicio = new Date(new Date(dataFim).setMonth(new Date(dataFim).getMonth() - 3)).toISOString().split('T', 1)[0];
 
       const count = Math.floor((numberOfPages - 1) * 99 + lastPageCount);
       setPropositionsCount(count);
@@ -80,8 +86,8 @@ export default function Home() {
               <p><b>Deputados</b> em exercício</p>
               {
                 deputiesCount ?
-                  <p className="text-[4rem] font-bold">{deputiesCount}</p> :
-                  <Skeleton className="h-[4rem] w-[3rem] mt-4"></Skeleton>
+                  <p className="text-[3rem] font-bold">{deputiesCount}</p> :
+                  <Skeleton className="h-[3rem] w-[3rem] mt-4"></Skeleton>
               }
             </CardContent>
           </CustomCard>
@@ -90,8 +96,8 @@ export default function Home() {
               <p><b>Partidos</b> representados</p>
               {
                 partiesCount ? 
-                  <p className="text-[4rem] font-bold">{partiesCount}</p> :
-                  <Skeleton className="h-[4rem] w-[3rem] mt-4"></Skeleton>
+                  <p className="text-[3rem] font-bold">{partiesCount}</p> :
+                  <Skeleton className="h-[3rem] w-[3rem] mt-4"></Skeleton>
               }
             </CardContent>
           </CustomCard>
@@ -100,8 +106,8 @@ export default function Home() {
               <p><b>Propostas</b> apresentadas no ano atual</p>
               {
                 propositionsCount ? 
-                  <p className="text-[4rem] font-bold">{propositionsCount.toLocaleString('pt-br')}</p> :
-                  <Skeleton className="h-[4rem] w-[6rem] mt-4"></Skeleton>
+                  <p className="text-[3rem] font-bold">{propositionsCount.toLocaleString('pt-br')}</p> :
+                  <Skeleton className="h-[3rem] w-[6rem] mt-4"></Skeleton>
               }
             </CardContent>
           </CustomCard>
