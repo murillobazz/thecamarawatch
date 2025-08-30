@@ -43,7 +43,7 @@ function Propositions() {
         const json = await response.json();
         setPropositions(json.dados);
         // Seta última página
-        const url = json.links.filter((link: {href: string, rel: string}) => link.rel === 'last');
+        const url = json.links.filter((link: { href: string, rel: string }) => link.rel === 'last');
         let newLastPage = url[0].href.split('&').find((item: string) => item.includes('pagina'));
         newLastPage = Number(newLastPage.split('=')[1]);
         setLastPage(newLastPage);
@@ -69,7 +69,16 @@ function Propositions() {
         <PartiesDropdown parties={parties} setSelectedParty={setSelectedParty} isLoading={isLoading}></PartiesDropdown>
       </div>
       <div className="flex flex-col items-center justify-center mb-3">
-        {selectedParty && <PropositionsTable propositions={propositions} isLoading={isLoading}></PropositionsTable>}
+        {selectedParty &&
+          <PropositionsTable
+            title={"Proposições apresentados neste ano"}
+            propositions={propositions}
+            isLoading={isLoading}
+            currentPage={currentPage}
+            setCurrentPage={setCurrentPage}
+            lastPage={lastPage}
+          >
+          </PropositionsTable>}
         {selectedParty &&
           <div className="flex gap-1 mt-2">
             <Button variant="ghost" className="hover:cursor-pointer" disabled={currentPage === 1 || isLoading} onClick={() => setCurrentPage(currentPage - 1)}>

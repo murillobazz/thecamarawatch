@@ -46,7 +46,7 @@ export function ExpensesTable({ expenses, isLoading, title, currentPage, setCurr
                   </p>
                 </TableCell>
               <TableCell className="max-w-[60px]">
-                {item.valorDocumento.toLocaleString('pt-BR', {style: 'currency', currency: 'BRL'})}
+                {Number(item.valorDocumento).toLocaleString('pt-BR', {style: 'currency', currency: 'BRL'})}
               </TableCell>
               </TableRow>
             )
