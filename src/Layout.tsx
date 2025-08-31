@@ -26,7 +26,7 @@ function Layout() {
         <Outlet />
       </main>
       <footer className="md:absolute bottom-0 w-full flex justify-center p-1">
-        <p className="text-xs">Made by <a href="https://github.com/murillobazz" target="_blank" className="font-bold">murillobazz</a></p>
+        <p className="text-xs">Made by <a href="https://github.com/murillobazz" target="_blank" className="font-bold underline">murillobazz</a></p>
       </footer>
     </ThemeProvider>
   );

@@ -1,9 +1,6 @@
 import { useState, useEffect } from 'react';
 import PartiesDropdown from './components/parties-dropdown';
 import { PropositionsTable } from './components/propositionsTable';
-import { Button } from './components/ui/button';
-import { Input } from './components/ui/input';
-
 interface selectedPartyProps {
   id: string,
   sigla: string
@@ -38,8 +35,8 @@ function Propositions() {
     const fetchPropositions = async () => {
       setIsLoading(true);
       try {
-        const date = { from: new Date(2024, 0, 1), to: new Date(2025, 0, 1) }
-        const response = await fetch(`https://dadosabertos.camara.leg.br/api/v2/proposicoes?idPartidoAutor=${selectedParty?.id}&ordem=DESC&dataInicio=${date.from.toISOString().split('T')[0]}&dataFim=${date.to.toISOString().split('T')[0]}&itens=10&pagina=${currentPage}`);
+        const currentYear = new Date().getFullYear();
+        const response = await fetch(`https://dadosabertos.camara.leg.br/api/v2/proposicoes?idPartidoAutor=${selectedParty?.id}&ordem=DESC&ano=${currentYear}&itens=10&pagina=${currentPage}`);
         const json = await response.json();
         setPropositions(json.dados);
         // Seta última página
@@ -77,18 +74,9 @@ function Propositions() {
             currentPage={currentPage}
             setCurrentPage={setCurrentPage}
             lastPage={lastPage}
+            classes={"border rounded-xl py-2 w-full"}
           >
-          </PropositionsTable>}
-        {selectedParty &&
-          <div className="flex gap-1 mt-2">
-            <Button variant="ghost" className="hover:cursor-pointer" disabled={currentPage === 1 || isLoading} onClick={() => setCurrentPage(currentPage - 1)}>
-              Anterior
-            </Button>
-            <Input type="number" value={currentPage} onChange={(event) => setCurrentPage(Number(event.target.value))} disabled={isLoading || currentPage === lastPage} className="w-16 text-center"></Input>
-            <Button variant="ghost" className="hover:cursor-pointer" onClick={() => setCurrentPage(currentPage + 1)} disabled={isLoading || currentPage === lastPage}>
-              Próximo
-            </Button>
-          </div>
+          </PropositionsTable>
         }
       </div>
     </>

@@ -11,38 +11,36 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
 interface propositionsTableProps {
-  propositions: Array<{ id: string, siglaTipo: string, numero: number, ementa: string, ano: number }>,
+  propositions: Array<{ id: string, siglaTipo: string, numero: number, ementa: string, ano: number, uri: string }>,
   isLoading: boolean,
   currentPage: number,
   setCurrentPage: (page: number) => void,
   lastPage: number,
-  title: string
+  title: string,
+  classes: string
 }
 
-export function PropositionsTable({ propositions, isLoading, title, currentPage, setCurrentPage, lastPage }: propositionsTableProps) {
+export function PropositionsTable({ propositions, isLoading, title, currentPage, setCurrentPage, lastPage, classes }: propositionsTableProps) {
 
   if (isLoading) return (
     <Skeleton className="md:w-1/2 w-full min-h-[300px]"></Skeleton>
   )
 
   return (
-    <div className="border rounded-xl py-2 md:w-1/2 w-full">
+    <div className={classes}>
       <p className="text-center font-bold">{ title }</p>
       <Table>
         <TableHeader>
           <TableRow>
-            <TableHead>Tipo</TableHead>
-            <TableHead>Número</TableHead>
+            <TableHead>Proposição</TableHead>
             <TableHead>Ementa</TableHead>
-            <TableHead className="text-right">Ano</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
           {propositions && propositions.map((item) => {
             return (
               <TableRow key={item.id} className="text-left px-4">
-                <TableCell>{item.siglaTipo}</TableCell>
-                <TableCell>{item.numero}</TableCell>
+                <TableCell>{item.siglaTipo} {item.numero}/{item.ano}</TableCell>
                 <TableCell className="w-full text-left">
                   <p style={{ whiteSpace: 'normal' }}>
                     <span className={item.ementa ? "" : "italic"}>
@@ -50,7 +48,6 @@ export function PropositionsTable({ propositions, isLoading, title, currentPage,
                     </span>
                   </p>
                 </TableCell>
-                <TableCell className="text-right">{item.ano === 0 ? "2025" : item.ano}</TableCell>
               </TableRow>
             )
           })}

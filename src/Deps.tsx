@@ -180,12 +180,11 @@ function Deps() {
           </DialogHeader>
         </DialogContent>
       </Dialog>
-      <div className="flex md:flex-row flex-col items-start gap-4 py-4 md:gap-2 md:py-2 max-h-[360px]">
+      <div className="flex md:flex-row flex-col gap-4 py-4 md:gap-2 md:py-2 max-h-[360px]">
         <ProfileCard selectedDeputy={selectedDeputy} />
         <TotalExpensesCard selectedDeputy={selectedDeputy} />
-        {/* <ExpensesCard selectedDeputy={selectedDeputy} /> */}
       </div>
-      <div className="flex md:flex-row flex-col gap-4 py-4 md:gap-2 md:py-2">
+      <div className="flex items-start md:flex-row flex-col gap-4 py-4 mb-2 md:py-2">
         {selectedDeputy &&
           <PropositionsTable
             title={"Proposições apresentados neste ano"}
@@ -194,6 +193,7 @@ function Deps() {
             currentPage={currentPropositionsPage}
             setCurrentPage={setCurrentPropositionsPage}
             lastPage={lastPropositionsPage}
+            classes={"border rounded-xl py-2 md:w-1/2 w-full bg-card"}
           >
           </PropositionsTable>
         }

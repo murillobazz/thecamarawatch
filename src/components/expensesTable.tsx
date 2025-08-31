@@ -25,7 +25,7 @@ export function ExpensesTable({ expenses, isLoading, title, currentPage, setCurr
   )
 
   return (
-    <div className="border rounded-xl py-2 md:w-1/2 w-full">
+    <div className="border rounded-xl py-2 md:w-1/2 w-full bg-card">
       <p className="text-center font-bold">{ title }</p>
       <Table>
         <TableHeader>

@@ -14,8 +14,8 @@ import FavoriteToggle from '@/components/favoriteToggle';
 export default function ProfileCard({ selectedDeputy }: { selectedDeputy: DeputyProps | null }) {
   if (selectedDeputy) {
     return (
-      <Card className="p-6 w-full h-full max-w-[420px]">
-        <div className="flex gap-4">
+      <Card className="p-6 w-full max-w-[420px]">
+        <div className="flex gap-4 my-auto">
           <Avatar className="w-[64px] h-[64px]">
             <AvatarImage src={selectedDeputy.ultimoStatus.urlFoto} />
             <AvatarFallback><User /></AvatarFallback>
