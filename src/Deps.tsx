@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -19,139 +19,161 @@ import { PropositionsTable } from './components/propositionsTable';
 import { ExpensesTable } from './components/expensesTable';
 
 function Deps() {
+  // Estado para lista de deputados
   const [deputies, setDeputies] = useState<DeputyProps[]>([]);
-  const [filteredDeputies, setFilteredDeputies] = useState<DeputyProps[]>([]);
+  // Estado para deputado selecionado
   const [selectedDeputy, setSelectedDeputy] = useState<DeputyProps | null>(null);
-
-  const [deputyPropositions, setDeputyPropositions] = useState([]);
+  // Estado para erro ao buscar deputado
+  const [deputyError, setDeputyError] = useState<string | null>(null);
+  // Estado para proposições do deputado
+  type Proposition = { id: string; siglaTipo: string; numero: number; ementa: string; ano: number; uri: string };
+  const [deputyPropositions, setDeputyPropositions] = useState<Proposition[]>([]);
   const [currentPropositionsPage, setCurrentPropositionsPage] = useState(1);
   const [lastPropositionsPage, setLastPropositionsPage] = useState(1);
-
-  const [deputyExpenses, setDeputyExpenses] = useState([]);
+  // Estado para despesas do deputado
+  type Expense = { numDocumento: string; tipoDespesa: string; numero: number; nomeFornecedor: string; cnpjCpfFornecedor: string; dataDocumento: string; valorDocumento: string };
+  const [deputyExpenses, setDeputyExpenses] = useState<Expense[]>([]);
   const [currentExpensesPage, setCurrentExpensesPage] = useState(1);
   const [lastExpensesPage, setLastExpensesPage] = useState(1);
-
-  // const [isLoading, setIsLoading] = useState(true);
-  const [isPropositionsLoading, setIsPropositionsLoading] = useState(true);
-  const [isExpensesLoading, setIsExpensesLoading] = useState(true);
-
+  // Estado de carregamento das tabelas
+  const [isPropositionsLoading, setIsPropositionsLoading] = useState(false);
+  const [isExpensesLoading, setIsExpensesLoading] = useState(false);
+  // Estado para busca e debounce
   const [searchTerm, setSearchTerm] = useState("");
+  const [debouncedSearch, setDebouncedSearch] = useState("");
+  // Estado para id do deputado selecionado
   const [deputyId, setDeputyId] = useState<number | null>(null);
+  // Estado para controle do Dialog
   const [open, setOpen] = useState(false);
 
+  // Função para selecionar deputado ao clicar
   const handleClick = (deputy: DeputyProps) => {
     setOpen(false);
-    // setIsLoading(true);
     setDeputyId(deputy.id);
   }
 
+  // Busca lista de deputados ao montar o componente
   useEffect(() => {
+    const controller = new AbortController(); // Permite cancelar requisição se desmontar
     const fetchDeputies = async () => {
       try {
-        // const response = await fetch(`http://localhost:8010/proxy/deputados?ordem=ASC&ordenarPor=nome`);
-        const response = await fetch(`https://dadosabertos.camara.leg.br/api/v2/deputados?ordem=ASC&ordenarPor=nome`);
+        const response = await fetch(`https://dadosabertos.camara.leg.br/api/v2/deputados?ordem=ASC&ordenarPor=nome`, { signal: controller.signal });
         const json = await response.json();
         setDeputies(json.dados);
       } catch (e) {
+        if (e instanceof DOMException && e.name === 'AbortError') return; // Ignora abortos
         console.log(e);
-      } finally {
-        // setIsLoading(false);
       }
     }
-
     fetchDeputies();
+    return () => controller.abort(); // Cancela requisição se desmontar
   }, [])
 
+  // Busca detalhes do deputado selecionado
   useEffect(() => {
+    if (!deputyId) return;
+    const controller = new AbortController();
     const fetchDeputy = async (id: number) => {
       try {
-        // const response = await fetch(`http://localhost:8010/proxy/deputados/${id}`);
-        const response = await fetch(`https://dadosabertos.camara.leg.br/api/v2/deputados/${id}`);
+        setDeputyError(null); // Limpa erro anterior
+        const response = await fetch(`https://dadosabertos.camara.leg.br/api/v2/deputados/${id}`, { signal: controller.signal });
+        if (!response.ok) throw new Error('Erro ao buscar deputado.');
         const json = await response.json();
         setCurrentPropositionsPage(1);
         setCurrentExpensesPage(1);
         setSelectedDeputy(json.dados);
       } catch (e) {
+        if (e instanceof DOMException && e.name === 'AbortError') return;
+        setSelectedDeputy(null);
+        setDeputyError('Não foi possível carregar os dados do deputado. Tente novamente.');
         console.log(e);
       }
-
-      // setIsLoading(false);
     }
-
-    if (deputyId) {
-      fetchDeputy(deputyId);
-    }
+    fetchDeputy(deputyId);
+    return () => controller.abort();
   }, [deputyId])
 
+  // Debounce da busca para evitar filtro a cada tecla
   useEffect(() => {
-    const filteredDeputies = deputies
-      .filter((deputy: DeputyProps) =>
-        deputy.nome.toLowerCase().includes(searchTerm.toLowerCase())
-      )
-      .slice(0, 20);
-    if (searchTerm) setFilteredDeputies(filteredDeputies);
-  }, [searchTerm, deputies])
+    const t = setTimeout(() => setDebouncedSearch(searchTerm.trim()), 300);
+    return () => clearTimeout(t);
+  }, [searchTerm]);
 
+  // Filtra deputados de acordo com busca (memoizado)
+  const filteredDeputies = useMemo(() => {
+    if (!debouncedSearch) return [];
+    const q = debouncedSearch.toLowerCase();
+    return deputies.filter(d => d.nome.toLowerCase().includes(q)).slice(0, 20);
+  }, [debouncedSearch, deputies]);
+
+  // Busca proposições do deputado selecionado e página atual
   useEffect(() => {
+    if (!selectedDeputy) return;
+    const controller = new AbortController();
     const fetchDeputyPropositions = async (deputy: DeputyProps) => {
+      setIsPropositionsLoading(true);
       try {
-        setIsPropositionsLoading(true);
-        // const dataFim = new Date().toISOString().split('T', 1)[0];
-        // const dataInicio = new Date(new Date(dataFim).setMonth(new Date(dataFim).getMonth() - 3)).toISOString().split('T', 1)[0];
         const currentYear = new Date().getFullYear();
-        // const response = await fetch(`https://dadosabertos.camara.leg.br/api/v2/proposicoes?ordem=DESC&siglaTipo=PL&idDeputadoAutor=${deputy.id}&dataApresentacaoInicio=${dataInicio}&dataApresentacaoFim=${dataFim}&itens=10&pagina=${currentPropositionsPage}`);
-        const response = await fetch(`https://dadosabertos.camara.leg.br/api/v2/proposicoes?ordem=DESC&siglaTipo=PL&idDeputadoAutor=${deputy.id}&ano=${currentYear}&itens=10&pagina=${currentPropositionsPage}`);
+        const response = await fetch(`https://dadosabertos.camara.leg.br/api/v2/proposicoes?ordem=DESC&siglaTipo=PL&idDeputadoAutor=${deputy.id}&ano=${currentYear}&itens=10&pagina=${currentPropositionsPage}`, { signal: controller.signal });
         const json = await response.json();
-
-        // Seta última página
+        // Seta última página (paginação)
         const url = json.links.filter((link: { href: string, rel: string }) => link.rel === 'last');
-        let newLastPage = url[0].href.split('&').find((item: string) => item.includes('pagina'));
-        newLastPage = Number(newLastPage.split('=')[1]);
+        let newLastPage = url[0]?.href?.split('&').find((item: string) => item.includes('pagina'));
+        newLastPage = newLastPage ? Number(newLastPage.split('=')[1]) : 1;
         setLastPropositionsPage(newLastPage);
-
-        // Verifica se a página tem dados antes de trazer para o state
-        if (json.dados.length > 0) {
-          setDeputyPropositions(json.dados);
-        }
+        // Normaliza dados para garantir tipagem
+  setDeputyPropositions((json.dados ?? []).map((p: Proposition) => ({
+          id: p.id,
+          siglaTipo: p.siglaTipo,
+          numero: p.numero,
+          ementa: p.ementa ?? 'Informação de Ementa não registrada',
+          ano: p.ano,
+          uri: p.uri ?? '',
+        })));
       } catch (e) {
+        if (e instanceof DOMException && e.name === 'AbortError') return;
         console.log(e);
       } finally {
         setIsPropositionsLoading(false);
       }
     }
-
-    if (selectedDeputy) {
-      fetchDeputyPropositions(selectedDeputy);
-    }
+    fetchDeputyPropositions(selectedDeputy);
+    return () => controller.abort();
   }, [selectedDeputy, currentPropositionsPage])
 
+  // Busca despesas do deputado selecionado e página atual
   useEffect(() => {
+    if (!selectedDeputy) return;
+    const controller = new AbortController();
     const fetchDeputyExpenses = async (deputy: DeputyProps) => {
+      setIsExpensesLoading(true);
       try {
-        setIsExpensesLoading(true);
-        const response = await fetch(`https://dadosabertos.camara.leg.br/api/v2/deputados/${deputy.id}/despesas?itens=10&ordem=DESC&ordenarPor=dataDocumento&pagina=${currentExpensesPage}`);
+        const response = await fetch(`https://dadosabertos.camara.leg.br/api/v2/deputados/${deputy.id}/despesas?itens=10&ordem=DESC&ordenarPor=dataDocumento&pagina=${currentExpensesPage}`, { signal: controller.signal });
         const json = await response.json();
-
-        // Seta última página
+        // Seta última página (paginação)
         const url = json.links.filter((link: { href: string, rel: string }) => link.rel === 'last');
-        let newLastPage = url[0].href.split('&').find((item: string) => item.includes('pagina'));
-        newLastPage = Number(newLastPage.split('=')[1]);
+        let newLastPage = url[0]?.href?.split('&').find((item: string) => item.includes('pagina'));
+        newLastPage = newLastPage ? Number(newLastPage.split('=')[1]) : 1;
         setLastExpensesPage(newLastPage);
-
-        // Verifica se a página tem dados antes de trazer para o state
-        if (json.dados.length > 0) {
-          setDeputyExpenses(json.dados);
-        }
+        // Normaliza dados para garantir tipagem
+  setDeputyExpenses((json.dados ?? []).map((p: Expense) => ({
+          numDocumento: p.numDocumento,
+          tipoDespesa: p.tipoDespesa,
+          numero: p.numero,
+          nomeFornecedor: p.nomeFornecedor,
+          cnpjCpfFornecedor: p.cnpjCpfFornecedor,
+          dataDocumento: p.dataDocumento,
+          valorDocumento: p.valorDocumento,
+        })));
       } catch (e) {
+        if (e instanceof DOMException && e.name === 'AbortError') return;
         console.log(e);
       } finally {
         setIsExpensesLoading(false);
       }
     }
-
-    if (selectedDeputy) {
-      fetchDeputyExpenses(selectedDeputy);
-    }
+    fetchDeputyExpenses(selectedDeputy);
+    return () => controller.abort();
   }, [selectedDeputy, currentExpensesPage])
 
   return (
@@ -180,11 +202,17 @@ function Deps() {
           </DialogHeader>
         </DialogContent>
       </Dialog>
+      {/* Alerta visual de erro ao buscar deputado */}
+      {deputyError && (
+        <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-2 rounded mb-2 text-center">
+          {deputyError}
+        </div>
+      )}
       <div className="flex md:flex-row flex-col gap-4 py-4 md:gap-2 md:py-2 max-h-[360px]">
         <ProfileCard selectedDeputy={selectedDeputy} />
         <TotalExpensesCard selectedDeputy={selectedDeputy} />
       </div>
-      <div className="flex items-start md:flex-row flex-col gap-4 py-4 mb-2 md:py-2">
+      <div className="flex items-start md:flex-row flex-col gap-2 py-4 mb-2 md:py-2">
         {selectedDeputy &&
           <PropositionsTable
             title={"Proposições apresentados neste ano"}
